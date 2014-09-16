@@ -71,7 +71,7 @@ io.on('connection', function(socket) {
             client.lrem("list", 1, items[data], function(err, data) {
                 console.log('in lrem');
                 client.lrange("list", 0, -1, function(err, items) {
-                    socket.emit('items', {
+                    io.emit('items', {
                         items: items
                     });
                 });
@@ -83,7 +83,7 @@ io.on('connection', function(socket) {
         items.push(data);
         client.rpush("list", data);
         client.lrange("list", 0, -1, function(err, items) {
-            socket.emit('items', {
+            io.emit('items', {
                 items: items
             });
         });

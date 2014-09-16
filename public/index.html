@@ -21,7 +21,7 @@
         count = items.length;
         $('#listTable tr').remove();
         items.forEach(function(item, index) {
-            $('#listTable').append('<tr><td id="item' + index + '">'+ item + '</td></tr>');
+            $('#listTable').append('<tr id="item' + index + '"><td>'+ item + '</td></tr>');
             var button = $('<input>', {
                 type: 'submit',
                 value: 'delete',
@@ -32,7 +32,9 @@
                 console.log(e.target.id);
                 socket.emit('delete item', e.target.id);
             });
-            $('td#item' + index).append(button);
+            var td = $('<td />');
+            td.append(button);
+            $('tr#item' + index).prepend(td);
         });
         $('#submitButton').on('click', function(e) {
             var item = $('#itemText').val();
