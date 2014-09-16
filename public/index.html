@@ -38,6 +38,9 @@
         });
         $('#submitButton').on('click', function(e) {
             var item = $('#itemText').val();
+            if(!item || item === '') {
+                return;
+            }
             index = count;
             count = count + 1;
             socket.emit('new item', item);
