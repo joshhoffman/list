@@ -61,15 +61,32 @@ app.get('/', function(req, res) {
 
 io.on('connection', function(socket) {
     console.log('on connection');
-    client.lrange("list", 0, 10000, function(err, items) {
+    client.lrange("list", 0, -1, function(err, items) {
         socket.emit('items', {
             items: items
+        });
+    });
+    socket.on('delete item', function(data) {
+        client.lrange("list", 0, -1, function(err, items) {
+            client.lrem("list", 1, items[data], function(err, data) {
+                console.log('in lrem');
+                client.lrange("list", 0, -1, function(err, items) {
+                    socket.emit('items', {
+                        items: items
+                    });
+                });
+            });
         });
     });
     socket.on('new item', function(data) {
         console.log(data);
         items.push(data);
         client.rpush("list", data);
+        client.lrange("list", 0, -1, function(err, items) {
+            socket.emit('items', {
+                items: items
+            });
+        });
     });
 });
 
