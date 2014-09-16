@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<header>
+    <title>list</title>
+    </header>
+<body>
+
+<table id="listTable">
+</table>
+
+    <input type="text" name="newItem" id="itemText"><br>
+    <input type="submit" value="Add" id="submitButton">
+<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script src="https://cdn.socket.io/socket.io-1.1.0.js"></script>
+<script>
+    var socket = io.connect('http://pyke-nodejs-94782.use1-2.nitrousbox.com/');
+    socket.on('items', function (data) {
+        console.log(data);
+        items = data.items;
+        items.forEach(function(item) {
+            $('#listTable').append('<tr><td>'+ item + '</td></tr>')
+        });
+        $('#submitButton').on('click', function(e) {
+            var item = $('#itemText').val();
+            socket.emit('new item', item);
+            $('#listTable').append('<tr><td>'+ item + '</td></tr>');
+            $('#itemText').val('');
+        });
+    });
+</script>
+</body>
+</html>
