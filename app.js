@@ -47,9 +47,9 @@ if(process.env.REDISTOGO_URL) {
 
     redis.auth(rtg.auth.split(":")[1]);
     io.set('transports',[
-        'xhr-polling',
-        'jsonp-polling'
+        'xhr-polling'
     ]);
+    io.set("polling duration", 10);
     /*io.configure(function () { 
         io.set("transports", ["xhr-polling"]); 
         io.set("polling duration", 10); 
