@@ -46,6 +46,10 @@ if(process.env.REDISTOGO_URL) {
     var redis = require("redis").createClient(rtg.port, rtg.hostname);
 
     redis.auth(rtg.auth.split(":")[1]);
+    socket.set('transports',[
+        'xhr-polling',
+        'jsonp-polling'
+    ]);
     /*io.configure(function () { 
         io.set("transports", ["xhr-polling"]); 
         io.set("polling duration", 10); 
