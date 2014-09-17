@@ -13,10 +13,16 @@ var fs = require('fs');
 
 var app = express();
 var redis = require('redis');
-var client = redis.createClient();
+var client;
+if(process.env.PORT) {
+    client = redis.createClient(11895);
+    client.auth('13fd24b5159196e0595d77ba0131c7c9');
+} else {
+    client = redis.createClient();
+}
 
 var config = function(app) {
-    app.set('port', 3000);
+    app.set('port', process.env.PORT || 3000);
     //app.use(favicon(path.join(__dirname, './public/favicon.ico')));
     app.use(morgan('dev', {immediate: true}));
     app.use(expressJson());
