@@ -15,7 +15,7 @@ var app = express();
 var redis = require('redis');
 var client;
 if(process.env.PORT) {
-    client = redis.createClient(11895, 'redis://redistogo:13fd24b5159196e0595d77ba0131c7c9@barreleye.redistogo.com', {});
+    client = redis.createClient(11895, 'redis://barreleye.redistogo.com', {});
     client.auth('13fd24b5159196e0595d77ba0131c7c9');
 } else {
     client = redis.createClient();
