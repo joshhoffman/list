@@ -11,18 +11,6 @@ var path = require('path');
 var url = require('url');
 var fs = require('fs');
 
-var app = express();
-var redis = require('redis');
-var client;
-if(process.env.REDISTOGO_URL) {
-    var rtg = require("url").parse(process.env.REDISTOGO_URL);
-    var redis = require("redis").createClient(rtg.port, rtg.hostname);
-
-    redis.auth(rtg.auth.split(":")[1]);
-} else {
-    client = redis.createClient();
-}
-
 var config = function(app) {
     app.set('port', process.env.PORT || 3000);
     //app.use(favicon(path.join(__dirname, './public/favicon.ico')));
@@ -45,9 +33,26 @@ var config = function(app) {
     }
 };
 
+var app = express();
+var redis = require('redis');
+var client;
+
 config(app);
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
+
+if(process.env.REDISTOGO_URL) {
+    var rtg = require("url").parse(process.env.REDISTOGO_URL);
+    var redis = require("redis").createClient(rtg.port, rtg.hostname);
+
+    redis.auth(rtg.auth.split(":")[1]);
+    io.configure(function () { 
+        io.set("transports", ["xhr-polling"]); 
+        io.set("polling duration", 10); 
+    });
+} else {
+    client = redis.createClient();
+}
 
 var items = [];
 
