@@ -1,0 +1,3 @@
+{
+    "ignore": ["public/*", "qa/*", "gruntfile.js", "app/*"]
+}

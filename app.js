@@ -1,4 +1,4 @@
-var favicon = require('serve-favicon')
+var favicon = require('serve-favicon');
 var morgan = require('morgan');
 var express = require('express');
 var cookieParser = require('cookie-parser');
@@ -58,17 +58,37 @@ if(process.env.REDISTOGO_URL) {
     client = redis.createClient();
 }
 
-var items = [];
+app.get('/', function(req, res) {
+    res.status(200);
+    fs.readFile('./public/index.html', function(err, html) {
+        if(err) { throw err; }
+        res.writeHeader(200, {"Content-Type": "text/html"});
+        res.write(html);
+        res.end();
+    });
+});
 
-app.post('/', function(req, res) {
+app.get('/lists', function(req, res) {
+    client.lrange("lists", 0, -1, function(err, lists) {
+        res.json(lists);
+    });
+});
+
+app.post('/lists', function(req, res) {
+    //client.rpush("lists", req.body);
+    console.log(req.body);
+    res.json({status: "success"});
+});
+
+app.post('/lists/:list', function(req, res) {
     items.push(req.body.newItem);
     res.status(200);
     res.redirect('/');
 });
 
-app.get('/', function(req, res) {
+app.get('/lists/:list', function(req, res) {
     res.status(200);
-    fs.readFile('./public/index.html', function(err, html) {
+    fs.readFile('./public/list.html', function(err, html) {
         if(err) { throw err; }
         res.writeHeader(200, {"Content-Type": "text/html"});
         res.write(html);
@@ -109,5 +129,5 @@ io.on('connection', function(socket) {
 
 var port = app.get('port');
 var ret = server.listen(port, function() {
-    console.log('font end connected on port ' + port)
+    console.log('font end connected on port ' + port);
 });

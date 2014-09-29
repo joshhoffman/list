@@ -1,53 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
-<header>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
     <title>list</title>
-    </header>
+    <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+</head>
 <body>
+<table id="lists"></ul>
+<input type="text" name="newList" id="listText"><br>
+<input type="submit" value="Add" id="submitButton">
 
-<table id="listTable">
-</table>
-
-    <input type="text" name="newItem" id="itemText"><br>
-    <input type="submit" value="Add" id="submitButton">
-<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
-<script src="https://cdn.socket.io/socket.io-1.1.0.js"></script>
 <script>
+    console.log("test");
     var count = 0;
-    var socket = io.connect('/');
-    socket.on('items', function (data) {
-        console.log(data);
-        items = data.items;
-        count = items.length;
-        $('#listTable tr').remove();
-        items.forEach(function(item, index) {
-            $('#listTable').append('<tr id="item' + index + '"><td>'+ item + '</td></tr>');
-            var button = $('<input>', {
-                type: 'submit',
-                value: 'delete',
-                id: index
-            });
-            button.on('click', function(e) {
-                console.log('delete');
-                console.log(e.target.id);
-                socket.emit('delete item', e.target.id);
-            });
-            var td = $('<td />');
-            td.append(button);
-            $('tr#item' + index).prepend(td);
-        });
-        $('#submitButton').on('click', function(e) {
-            var item = $('#itemText').val();
-            if(!item || item === '') {
-                return;
+    $.get("/lists", function(lists) {
+        console.log(lists);
+        count = lists.length;
+    });
+    $('#submitButton').on('click', function(e) {
+        var list = $('#listText').val();
+        if(!list || list === '') {
+            return;
+        }
+        console.log('in click');
+
+        $.ajax({
+            type: "POST",
+            url: "/lists",
+            data: {
+                data: list
+            },
+            success: function(data) {
+                console.log('success');
+                var index = count;
+                count = count + 1;
+                var button = '<input type="submit" id="delete">'
+                $('#lists').append('<li><td id="' + index + '>'+ list + button + '</td></tr>');
+                $('#listText').val('');
             }
-            index = count;
-            count = count + 1;
-            socket.emit('new item', item);
-            var button = '<input type="submit" id="delete">'
-            $('#listTable').append('<tr><td id="' + index + '>'+ item + button + '</td></tr>');
-            console.log($('td#' + index));
-            $('#itemText').val('');
         });
     });
 </script>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<header>
+    <title>list</title>
+    </header>
+<body>
+
+<table id="listTable">
+</table>
+
+    <input type="text" name="newItem" id="itemText"><br>
+    <input type="submit" value="Add" id="submitButton">
+<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script src="https://cdn.socket.io/socket.io-1.1.0.js"></script>
+<script>
+    var count = 0;
+    var socket = io.connect('/');
+    socket.on('items', function (data) {
+        console.log(data);
+        var items = data.items;
+        count = items.length;
+        $('#listTable tr').remove();
+        items.forEach(function(item, index) {
+            $('#listTable').append('<tr id="item' + list + '"><td>'+ item + '</td></tr>');
+            var button = $('<input>', {
+                type: 'submit',
+                value: 'delete',
+                id: list
+            });
+            button.on('click', function(e) {
+                console.log('delete');
+                console.log(e.target.id);
+                socket.emit('delete item', e.target.id);
+            });
+            var td = $('<td />');
+            td.append(button);
+            $('tr#item' + list).prepend(td);
+        });
+        $('#submitButton').on('click', function(e) {
+            var item = $('#itemText').val();
+            if(!item || item === '') {
+                return;
+            }
+            index = count;
+            count = count + 1;
+            socket.emit('new item', item);
+            var button = '<input type="submit" id="delete">'
+            $('#listTable').append('<tr><td id="' + index + '>'+ item + button + '</td></tr>');
+            console.log($('td#' + index));
+            $('#itemText').val('');
+        });
+    });
+</script>
+</body>
+</html>
