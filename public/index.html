@@ -13,6 +13,13 @@
 <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
 <script src="https://cdn.socket.io/socket.io-1.1.0.js"></script>
 <script>
+$(document).ready(function() {
+        $('#itemText').keyup(function(event) {
+            if(event.keyCode == 13) {
+                $('#submitButton').click();
+            }
+        });
+});
     var count = 0;
     var socket = io.connect('/');
     socket.on('items', function (data) {
